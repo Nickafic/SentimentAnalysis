@@ -1,13 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sentiment Analysis Result</title>
-</head>
-<body>
+{% extends "htmlheader.html" %}
+
+{% block tittle %}
+Sentimental Analysis Results Page
+{% endblock %}
+
+{% block headHTML %}
+{% endblock %}
+
+{% block innerHTML %}
+
     <h1>Sentiment Analysis Result</h1>
     <p><strong>Analysis:</strong> {{ sentiment }}</p>
 
     <!-- Add a Back button to go back to the main page -->
     <a href="/">Back to Main</a>
-</body>
-</html>
+
+{% endblock %}

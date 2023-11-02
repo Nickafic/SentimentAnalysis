@@ -7,9 +7,9 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    # if not session.get('logged_in'):
-    #     return redirect(url_for('login'))
-    return render_template('main.html')
+    if not session.get('logged_in'):
+         return redirect("/login");
+    return render_template('main.html', USERNAME=session["username"]);
 
 SENTIMENT_API_URL = "https://bbtflv6yqf.execute-api.us-east-1.amazonaws.com/Initial/sentimental-analysis"
 

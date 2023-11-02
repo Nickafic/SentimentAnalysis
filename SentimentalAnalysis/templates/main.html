@@ -1,16 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sentiment Analysis</title>
-</head>
-<body>
+{% extends "htmlheader.html" %}
+
+{% block tittle %}
+Sentimental Analysis Home Page
+{% endblock %}
+
+{% block headHTML %}
+{% endblock %}
+
+{% block innerHTML %}
+
+    <h2>{{USERNAME}}</h2>
     <h1>Welcome to Sentiment Analysis</h1>
     <form method="POST" action="/analyze">
         <label for="text">Enter Text:</label>
-        <input type="text" name="text" id="text" required> <!-- Set rows="1" to make it a single line -->
+        </br>
+        <!-- Input text swapped to text area -->
+        <textarea name="text", id="text" required></textarea>
+        </br>
         <input type="submit" value="Analyze">
     </form>
     <a href="/login">login</a>
     <a href="/logout">logout</a>
-</body>
-</html>
+
+{% endblock %}

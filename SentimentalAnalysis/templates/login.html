@@ -1,17 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h1>Login</h1>
-    <form method="POST" action="/login">
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required><br><br>
-        <input type="submit" value="Login">
-    </form>
-    <a href="/">Back to Main</a>
-</body>
-</html>
+{% extends "htmlheader.html" %}
+
+{% block tittle %}
+Sentimental Analysis Login Page
+{% endblock %}
+
+{% block headHTML %}
+{% endblock %}
+
+
+{% block innerHTML %}
+    
+<h1>Login</h1>
+<form method="POST" action="/login">
+    <label for="username">Username:</label>
+    <input type="text" name="username" id="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" required><br><br>
+    <input type="submit" value="Login">
+</form>
+</br>
+<form method="GET", action="/signup">
+    <input type="submit" value="Sign Up / Register">
+</form>
+
+<a href="/">Back to Main</a>
+
+{% endblock %}
