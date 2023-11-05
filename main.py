@@ -1,4 +1,4 @@
-from SentimentalAnalysis import create_app
+from SentimentAnalysis import create_app
 
 app = create_app()
 
