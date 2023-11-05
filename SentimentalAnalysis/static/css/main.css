@@ -1,0 +1,22 @@
+#text {
+    max-width : 300px;
+}
+
+.input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 150px; /* Adjust the negative margin to move it up */
+}
+
+.text-center {
+    padding-top: 100px;
+    padding-left: 50px;
+}
+
+.sentiment-txt {
+    text-align: center;
+    padding-top: 50px;
+}
+
+

@@ -4,19 +4,20 @@
 Sentimental Analysis Home Page
 {% endblock %}
 
-
 {% block content %}
-    <h2>{{USERNAME}}</h2>
-    <h1>Welcome to Sentiment Analysis</h1>
-    <form method="POST" action="/analyze">
-        <label for="text">Enter Text:</label>
-        </br>
-        <!-- Input text swapped to text area -->
-        <textarea name="text", id="text" required></textarea>
-        </br>
-        <input type="submit" value="Analyze">
-    </form>
-    <a href="/login">login</a>
-    <a href="/logout">logout</a>
+    <link rel="stylesheet" href=" {{ url_for('static', filename='css/main.css') }}">
 
+    <h2>{{USERNAME}}</h2>
+    <h1 class="text-center">Uncover the Sentiment Behind Your Text</h1>
+    <form method="POST" action="/analyze">
+        <!-- Input text swapped to text area -->
+        <div class="input-group">
+            <input type="search" name="text" value="{{ input_text }}" class="form-control rounded" id="text" required></textarea>
+            <input type="submit" class="btn btn-outline-primary" value="Analyze">
+        </div>
+    </form>
+    <br>
+    {% if sentiment is not none%}
+        <p class="sentiment-txt">Sentiment: {{sentiment}} </p>
+    {% endif %}
 {% endblock %}

@@ -8,7 +8,7 @@ views = Blueprint('views', __name__)
 @views.route('/')
 def home():
     if not session.get('logged_in'):
-         return redirect("/login");z
+         return redirect("/login")
     return render_template('main.html', USERNAME=session["username"]);
 
 SENTIMENT_API_URL = "https://bbtflv6yqf.execute-api.us-east-1.amazonaws.com/Initial/sentimental-analysis"
@@ -31,6 +31,6 @@ def analyze():
         last_word = sentiment_words[-1].rstrip('"')
 
         # Process and display the last word of the sentiment label
-        return render_template('output.html', sentiment=last_word)
+        return render_template('main.html', sentiment=last_word, input_text=text)
     else:
-        return render_template('output.html', sentiment="Failed to analyze sentiment")
+        return render_template('main.html', sentiment="Failed to analyze sentiment", input_text=text)
