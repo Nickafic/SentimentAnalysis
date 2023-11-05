@@ -17,7 +17,7 @@ Sentimental Analysis Home Page
         </div>
     </form>
     <br>
-    {% if sentiment is not none%}
+    {% if sentiment %}
         <p class="sentiment-txt">Sentiment: {{sentiment}} </p>
     {% endif %}
 {% endblock %}
