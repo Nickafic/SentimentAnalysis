@@ -7,7 +7,12 @@ Sentimental Analysis Home Page
 {% block content %}
     <link rel="stylesheet" href=" {{ url_for('static', filename='css/main.css') }}">
 
-    <h2>{{USERNAME}}</h2>
+    <h2 class="text-center"> User: 
+        <small class="text-body-secondary">
+            {{USERNAME}}
+        </small>
+    </h2>
+
     <h1 class="text-center">Uncover the Sentiment Behind Your Text</h1>
     <form method="POST" action="/analyze">
         <!-- Input text swapped to text area -->
@@ -17,7 +22,9 @@ Sentimental Analysis Home Page
         </div>
     </form>
     <br>
+
     {% if sentiment %}
         <p class="sentiment-txt">Sentiment: {{sentiment}} </p>
     {% endif %}
+
 {% endblock %}

@@ -4,6 +4,11 @@
 Sentimental Analysis Login Page
 {% endblock %}
 
+{% block htmlheader %}
+<link rel="stylesheet" href=" {{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+
 {% block content %}
   <section>
     <div class="container mt-5 pt-5">
@@ -29,7 +34,6 @@ Sentimental Analysis Login Page
       </div>
     </div>
   </section>
-<link rel="stylesheet" href=" {{ url_for('static', filename='css/login.css') }}">
 
 <!-- <form method="POST" action="/login" id="log-title">
     <h3 align="center">Login</h3>
