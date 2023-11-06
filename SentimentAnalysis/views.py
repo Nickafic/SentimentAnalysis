@@ -31,6 +31,6 @@ def analyze():
         last_word = sentiment_words[-1].rstrip('"')
 
         # Process and display the last word of the sentiment label
-        return render_template('main.html', sentiment=last_word, input_text=text)
+        return render_template('main.html', USERNAME=session["username"], sentiment=last_word, input_text=text)
     else:
-        return render_template('main.html', sentiment="Failed to analyze sentiment", input_text=text)
+        return render_template('main.html', USERNAME=session["username"], sentiment="Failed to analyze sentiment", input_text=text)

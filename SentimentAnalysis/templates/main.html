@@ -4,26 +4,42 @@
 Sentimental Analysis Home Page
 {% endblock %}
 
+{% block htmlheader %}
+<link rel="stylesheet" href=" {{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
 {% block content %}
     <link rel="stylesheet" href=" {{ url_for('static', filename='css/main.css') }}">
+    
+    <div class="container pt-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="card bg-dark text-white" style="border-radius: 2rem;">
+                <div class="card-body p-5 text-center">
 
-    <h2 class="text-center"> User: 
-        <small class="text-body-secondary">
-            {{USERNAME}}
-        </small>
-    </h2>
+                    <h2 class="display-5"> User: 
+                        <small class="text-body-secondary">
+                            {{ USERNAME }}
+                        </small>
+                    </h2>
+                    <h1 class="display-1">Uncover The Sentiment Behind Your Text</h1>
 
-    <h1 class="text-center">Uncover the Sentiment Behind Your Text</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+      
     <form method="POST" action="/analyze">
         <!-- Input text swapped to text area -->
-        <div class="input-group">
-            <input type="search" name="text" value="{{ input_text }}" class="form-control rounded" id="text" required></textarea>
-            <input type="submit" class="btn btn-outline-primary" value="Analyze">
+        <div class="input-group mb-3">
+            <input type="search" class="form-control" placeholder="User text ..." aria-label="Recipient's username" aria-describedby="basic-addon2" name="text" value="{{ input_text }}" required>
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="submit"> Analyze </button>
+            </div>
         </div>
     </form>
-    <br>
-
+    
     {% if sentiment %}
+        <br>
         <p class="sentiment-txt">Sentiment: {{sentiment}} </p>
     {% endif %}
 

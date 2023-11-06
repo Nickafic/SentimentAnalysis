@@ -45,3 +45,7 @@ def logout():
 @auth.route('/signup')
 def signup():
     return "<p>signup</p><form method='GET', action='/login'><input type='submit' value='GO BACK'></form>"
+
+@auth.route('/recovery')
+def accountRecover():
+    return "<p>recovery</p><form method='GET', action='/login'><input type='submit' value='GO BACK'></form>"
