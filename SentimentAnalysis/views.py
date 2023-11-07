@@ -4,6 +4,8 @@ import requests
 import json
 
 views = Blueprint('views', __name__)
+EXTENSIONS = {'txt', 'csv'}
+
 
 @views.route('/')
 def home():
@@ -13,8 +15,8 @@ def home():
 
 SENTIMENT_API_URL = "https://bbtflv6yqf.execute-api.us-east-1.amazonaws.com/Initial/sentimental-analysis"
 
-@views.route('/analyze', methods=['POST'])
-def analyze():
+@views.route('/analyzeText', methods=['POST'])
+def analyzeText():
     # if not session.get('logged_in'):
     #     return redirect(url_for('login'))
 
@@ -34,3 +36,25 @@ def analyze():
         return render_template('main.html', USERNAME=session["username"], sentiment=last_word, input_text=text)
     else:
         return render_template('main.html', USERNAME=session["username"], sentiment="Failed to analyze sentiment", input_text=text)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in EXTENSIONS
+
+@views.route('/analyzeFile', methods=['POST'])
+def analyzeFile():
+        
+        if 'inputFile' not in request.files:
+            return render_template('main.html', USERNAME=session["username"], sentiment="File Failed To Upload")
+            
+            """ Process File"""
+
+        return redirect("/login", USERNAME=session["username"], sentiment="WIP")
+
+            
+
+        
+
+        
+
+
