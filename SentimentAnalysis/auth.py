@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, B
 import requests, boto3, bcrypt
 
 auth = Blueprint('auth', __name__)
-dynamodb = boto3.resource('dynamodb',aws_access_key_id='AKIAUPDKHTOYRWLPUPYB',aws_secret_access_key='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', region_name='us-west-1')
+dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('userdata')
 
 """
