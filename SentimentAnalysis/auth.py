@@ -3,7 +3,8 @@ import requests, boto3, bcrypt
 
 auth = Blueprint('auth', __name__)
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('userdata')
+usertable = dynamodb.Table('userdata')
+senttable = dynamodb.Table('sentiment')
 
 """
 Login Processing
@@ -18,13 +19,14 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        response = table.get_item(Key={'username': username})
+        response = usertable.get_item(Key={'username': username})
         if 'Item' in response:
             stored_hashed_password = response['Item']['password']
             if bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
                 session['username'] = username
                 session['logged_in'] = True
                 #redirect to Main page with user's name on top of main page.
+                
                 return redirect(url_for('views.home'))
             else:
                 return render_template('login.html', error='Incorrect username or password. Please try again.')
@@ -55,19 +57,25 @@ def signup():
         password = request.form['password']
         email = request.form['email']
 
-        response = table.query(
+        response = usertable.query(
             KeyConditionExpression='username = :username',
             ExpressionAttributeValues={':username': username}
         )
         if len(response['Items']) == 0:
             salt = bcrypt.gensalt()
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-            table.put_item(
+            usertable.put_item(
                 Item={
                     'username': username,
                     'email': email,
                     'password': hashed_password.decode('utf-8')
                     }
+            )
+            senttable.put_item(
+                Item={
+                    'username': username,
+                    'sentiments': []
+                }
             )
             return render_template('login.html')
         else:

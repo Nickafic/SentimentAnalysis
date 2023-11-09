@@ -1,0 +1,21 @@
+{% extends "htmlheader.html" %}
+
+{% block tittle %}
+Sentimental Analysis Results Page
+{% endblock %}
+
+{% block htmlheader %}
+<script type="text/javascript" src="{{ url_for('static', filename='script/history.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>User Account Dashboard</h2>
+    <h3>Text Input History</h3>
+    <div id="sentiment-history-panel" class="scrollable-list">
+        <!-- Sentiment history entries will be loaded here using JavaScript -->
+    </div>
+    <button class="btn btn-primary mt-2" id="prev-page">Previous Page</button>
+    <button class="btn btn-primary mt-2" id="next-page">Next Page</button>
+</div>
+{% endblock %}
