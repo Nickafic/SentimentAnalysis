@@ -99,37 +99,41 @@ def analyzeFile():
     try: 
         #ERROR Checks
         if 'inputFile' not in request.files:
-            return render_template('main.html', USERNAME=session["username"], sentiment="File Failed To Upload")
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Failed To Upload")
         activeFile = request.files['inputFile']
         activeFileName = secure_filename(activeFile.filename)
         #EXISTENCE CHECK
         if activeFileName == '':
-            return render_template('main.html', USERNAME=session["username"], sentiment="File Has No Name")
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Has No Name")
         #EXTENSION CHECK
         fileExtention = activeFileName.rsplit('.', 1)[1].lower()
         if( not ( ('.' in activeFileName) and (fileExtention in VALID_EXTENSIONS) ) ):
-            return render_template('main.html', USERNAME=session["username"], sentiment="File Extension is not allowed")
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Extension is not allowed")
         
         fileContent = activeFile.read().decode('utf-8')
         if(fileExtention == 'txt'):
             print(fileContent)
             #txt parse
-            return render_template('main.html', USERNAME=session["username"], sentiment="File Extension is txt")
+
+
+            ##Unfinished
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Extension is txt")
         elif (fileExtention == 'csv'):
             csvRecords = []
             for row in csv.reader(io.StringIO(fileContent)):
                 csvRecords.append(row)
-
             print(csvRecords)
             #csv parse
-            return render_template('main.html', USERNAME=session["username"], sentiment="File Extension is csv")
+
+            ##Unfinished
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Extension is csv")
 
         ##FAILED STATE SHOULD BE UNREACHABLE
-        return render_template('main.html', USERNAME=session["username"], sentiment="File UPLOADED file type not valid. Unknow Error Occurred")
+        return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File UPLOADED file type not valid. Unknow Error Occurred")
     except RequestEntityTooLarge:
         #abort(413, 'File size exceeds the allowed limit')
         #MAX FILE SIZE CHECK
-        return render_template('main.html', USERNAME=session["username"], sentiment="File size exceeds the allowed limit")
+        return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File size exceeds the allowed limit")
 
             
 

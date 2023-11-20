@@ -28,28 +28,63 @@ Sentimental Analysis Home Page
         </div>
     </div>
       
-    <form method="POST" action="/analyzeText">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="User text ..." aria-label="Recipient's username" aria-describedby="basic-addon2" name="text" value="{{ input_text }}" required>
-            <div class="input-group-append">
-              <button class="btn btn-outline-primary" type="submit"> Analyze </button>
-            </div>
-        </div>
-    </form>
+    <div class="container mt-0">
+        <div class="row">
+            <!--Columns Two-->
+            <form class="col-md-6" method="POST" action="/analyzeText">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="User text ..." aria-label="Recipient's username" aria-describedby="basic-addon2" name="text" value="{{ input_text }}" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit"> Analyze </button>
+                    </div>
+                </div>
+            </form>
+            
+    
+            <!--Columns Two-->
+            <form class="col-md-6" action="/analyzeFile" method="post" enctype="multipart/form-data">
+                
+                <div class="input-group">
+                    <input class="form-control" id="formFileLg" type="file" name="inputFile">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit"> Analyze </button>
+                    </div>
+                </div>
 
-    <form action="/analyzeFile" method="post" enctype="multipart/form-data" >
-        <div class="input-group">
-            <input class="form-control" id="formFileLg" type="file" name="inputFile">
-            <div class="input-group-append">
-                <button class="btn btn-outline-primary" type="submit"> Analyze </button>
-            </div>
+                <div class="alert alert-info mt-2" role="alert" data-toggle="collapse" data-target="#fileUploadInfo">
+                    <strong>Need Help. Click Here...</strong> File formatting rules can be seen here.
+                </div>
+                <div id="fileUploadInfo" class="collapse">
+                    <div class="alert alert-secondary">
+                        Any file input must match the following pattern and only one entry per line.<br/>
+                        --- Identifier,"Query Input" --- <br/>
+                        *Identifier - Can be a number or text but should be limited to a string with no whitespace. <br/>
+                        *Query Input - Should be surrounded with quotes to keep the message together. <br/>
+                    </div>
+                </div>
+
+            </form>
+            
         </div>
-    </form>
+    </div>
 
     
     {% if sentiment %}
         <br>
-        <p class="sentiment-txt">Sentiment: {{sentiment}} </p>
+        <div class="container mt-5">
+            <div class="alert alert-success" role="alert">
+                <strong>Success:</strong> The operation was completed successfully. <br/> Sentiment: {{sentiment}}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if ERRORMESSAGE %}
+        <br>
+        <div class="container mt-5">
+            <div class="alert alert-danger" role="alert">
+                <strong>Error: {{ERRORMESSAGE}}</strong>. Something went wrong. Please try again.
+            </div>
+        </div>
     {% endif %}
 
 {% endblock %}
