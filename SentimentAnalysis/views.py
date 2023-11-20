@@ -1,11 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint, jsonify
+
+from werkzeug.exceptions import RequestEntityTooLarge
+from werkzeug.utils import secure_filename
+
+import csv, io
 import requests, json, boto3
 
 views = Blueprint('views', __name__)
 dynamodb = boto3.resource('dynamodb')
 senttable = dynamodb.Table('sentiment')
-EXTENSIONS = {'txt', 'csv'}
 
+#Constansts
+VALID_EXTENSIONS = {'txt', 'csv'}
+SENTIMENT_API_URL = "https://bbtflv6yqf.execute-api.us-east-1.amazonaws.com/Initial/sentimental-analysis"
 
 @views.route('/')
 def home():
@@ -13,7 +20,6 @@ def home():
          return redirect("/login")
     return render_template('main.html', USERNAME=session["username"], sentiment=None)
 
-SENTIMENT_API_URL = "https://bbtflv6yqf.execute-api.us-east-1.amazonaws.com/Initial/sentimental-analysis"
 
 @views.route('/account')
 def account():
@@ -88,19 +94,42 @@ def analyzeText():
     else:
         return render_template('main.html', USERNAME=session["username"], sentiment="Failed to analyze sentiment", input_text=text)
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in EXTENSIONS
-
 @views.route('/analyzeFile', methods=['POST'])
 def analyzeFile():
-        
+    try: 
+        #ERROR Checks
         if 'inputFile' not in request.files:
             return render_template('main.html', USERNAME=session["username"], sentiment="File Failed To Upload")
-            
-            """ Process File"""
+        activeFile = request.files['inputFile']
+        activeFileName = secure_filename(activeFile.filename)
+        #EXISTENCE CHECK
+        if activeFileName == '':
+            return render_template('main.html', USERNAME=session["username"], sentiment="File Has No Name")
+        #EXTENSION CHECK
+        fileExtention = activeFileName.rsplit('.', 1)[1].lower()
+        if( not ( ('.' in activeFileName) and (fileExtention in VALID_EXTENSIONS) ) ):
+            return render_template('main.html', USERNAME=session["username"], sentiment="File Extension is not allowed")
+        
+        fileContent = activeFile.read().decode('utf-8')
+        if(fileExtention == 'txt'):
+            print(fileContent)
+            #txt parse
+            return render_template('main.html', USERNAME=session["username"], sentiment="File Extension is txt")
+        elif (fileExtention == 'csv'):
+            csvRecords = []
+            for row in csv.reader(io.StringIO(fileContent)):
+                csvRecords.append(row)
 
-        return redirect("/login", USERNAME=session["username"], sentiment="WIP")
+            print(csvRecords)
+            #csv parse
+            return render_template('main.html', USERNAME=session["username"], sentiment="File Extension is csv")
+
+        ##FAILED STATE SHOULD BE UNREACHABLE
+        return render_template('main.html', USERNAME=session["username"], sentiment="File UPLOADED file type not valid. Unknow Error Occurred")
+    except RequestEntityTooLarge:
+        #abort(413, 'File size exceeds the allowed limit')
+        #MAX FILE SIZE CHECK
+        return render_template('main.html', USERNAME=session["username"], sentiment="File size exceeds the allowed limit")
 
             
 
