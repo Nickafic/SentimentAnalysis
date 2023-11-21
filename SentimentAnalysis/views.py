@@ -114,8 +114,11 @@ def finishFileProcess(identifiers, messages):
         i = 0
         for splitString in splitJSONData:
             activeSplit = splitString.rsplit(',',1)
-            
-            nextEntry = {'index':i, 'indentifier':identifiers[i], 'query':activeSplit[0], 'result': activeSplit[1]}
+            if len(activeSplit) < 2 or len(activeSplit) > 2: #empty string check needs to be added during submisions. TEMP
+                msg = "txt is not formatted correctly. Missing ',' for '" + splitString + "'"
+                return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE=msg )
+
+            nextEntry = {'index':i, 'indentifier':identifiers[i], 'query':activeSplit[0], 'result':activeSplit[1]}
             i = i+1
             sentTable.append(nextEntry)
 
@@ -151,9 +154,12 @@ def analyzeFile():
             #txt parse
             try:
                 lines = fileContent.split('\n')
+                print(lines)
                 for line in lines:
                     if not line.strip():
                         continue  # Skip empty lines
+
+
             except Exception as e:
                 print("error")
             
@@ -162,17 +168,23 @@ def analyzeFile():
         elif (fileExtention == 'csv'): #CSV
             csvRecords = []
             for row in csv.reader(io.StringIO(fileContent)):
+                for word in row:
+                    if not word:
+                        return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="CSV formatting issue. Missing a value")
                 csvRecords.append(row)
             
-            if len(csvRecords[0]) > 2:
+            if( len(csvRecords) < 1 ):
+                return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="CSV formatting issue. File is empty")
+
+            if( len(csvRecords[0]) > 2 ):
                 return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="CSV formatting issue. Only use two columns")
 
-            #csv parse
             for rec in csvRecords:
                 identifier = rec[0]
                 message = rec[1]
                 messages.append(message)
                 identifiers.append(identifier)
+
         else: ##FAILED STATE SHOULD BE UNREACHABLE
             return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File UPLOADED file type not valid. Unknow Error Occurred")
         
