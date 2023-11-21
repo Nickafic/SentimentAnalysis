@@ -114,10 +114,6 @@ def finishFileProcess(identifiers, messages):
         i = 0
         for splitString in splitJSONData:
             activeSplit = splitString.rsplit(',',1)
-            if len(activeSplit) < 2 or len(activeSplit) > 2: #empty string check needs to be added during submisions. TEMP
-                msg = "txt is not formatted correctly. Missing ',' for '" + splitString + "'"
-                return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE=msg )
-
             nextEntry = {'index':i, 'indentifier':identifiers[i], 'query':activeSplit[0], 'result':activeSplit[1]}
             i = i+1
             sentTable.append(nextEntry)
@@ -150,21 +146,25 @@ def analyzeFile():
         fileContent = activeFile.read().decode('utf-8')
         
         if(fileExtention == 'txt'): #TXT
-            print(fileContent)
-            #txt parse
-            try:
-                lines = fileContent.split('\n')
-                print(lines)
-                for line in lines:
-                    if not line.strip():
-                        continue  # Skip empty lines
+            lines = fileContent.split('\n')
+            for line in lines:
+                
+                if not line.strip():
+                    continue  # Skip empty lines
 
+                activeSplits = line.split(',',1)
+                if len(activeSplits) != 2:
+                    msg = "txt is not formatted correctly. Missing ',' for '" + line + "'"
+                    return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE=msg )
+                
+                identifiers.append(activeSplits[0])
 
-            except Exception as e:
-                print("error")
-            
-            ##Unfinished
-            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Extension is txt")
+                if activeSplits[1].count('"') != 2:
+                    msg = "txt is not formatted correctly. Missing '\"' for '" + line + "'"
+                    return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE=msg )
+
+                messages.append(activeSplits[1].strip('"'))
+        #END IF
         elif (fileExtention == 'csv'): #CSV
             csvRecords = []
             for row in csv.reader(io.StringIO(fileContent)):
@@ -184,10 +184,14 @@ def analyzeFile():
                 message = rec[1]
                 messages.append(message)
                 identifiers.append(identifier)
+        #ENDIF
 
         else: ##FAILED STATE SHOULD BE UNREACHABLE
             return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File UPLOADED file type not valid. Unknow Error Occurred")
         
+        if( len(messages) < 1 or len(identifiers) < 1):
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File was empty")
+
         return finishFileProcess(identifiers, messages)
     
     except RequestEntityTooLarge:
