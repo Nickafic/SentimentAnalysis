@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, B
 from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.utils import secure_filename
 
-import csv, io
+import csv, io, base64
 import requests, json, boto3
 
 views = Blueprint('views', __name__)
@@ -122,11 +122,49 @@ def analyzeFile():
             csvRecords = []
             for row in csv.reader(io.StringIO(fileContent)):
                 csvRecords.append(row)
-            print(csvRecords)
             #csv parse
+            messages = []
+            for rec in csvRecords:
+                message = rec[1]
+                messages.append(message)
+
+            #cvs records[i][0] holds identifer
+            #cvs messages[i] holds message
+
+            JSONData = json.dumps(messages)
+            B64Data = base64.b64encode( JSONData.encode() ).decode()
+            APIPayload =  {
+                'queryType' : 'multiple',
+                'query' : B64Data
+            }
+
+            response = requests.get(SENTIMENT_API_URL, params=APIPayload)
+            
+            if response.status_code == 200:
+                resJSONData = response.json()['body']
+                resJSONData = resJSONData.split('\n', 1)[1]
+                splitJSONData = resJSONData.split('\n')
+                splitJSONData.pop()
+                print(splitJSONData)
+                
+                sentTable = []
+                i = 0
+                for splitString in splitJSONData:
+                    activeSplit = splitString.rsplit(',',1)
+                    print(activeSplit)
+                    print(i)
+                    print(csvRecords[i])
+                    nextEntry = {'index':i, 'indentifier':csvRecords[i][0], 'query':activeSplit[0], 'result': activeSplit[1]}
+                    i = i+1
+                    sentTable.append(nextEntry)
+
+            
+                return render_template('main.html', USERNAME=session["username"], sentimentTable=sentTable )
+            else:
+                print("Failed. CODE: ", response.status_code)
 
             ##Unfinished
-            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Extension is csv")
+            return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File Extension is csv. Processing Failed")
 
         ##FAILED STATE SHOULD BE UNREACHABLE
         return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File UPLOADED file type not valid. Unknow Error Occurred")

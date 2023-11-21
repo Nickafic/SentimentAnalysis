@@ -78,6 +78,34 @@ Sentimental Analysis Home Page
         </div>
     {% endif %}
 
+    {% if sentimentTable %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Index</th>
+                    <th>Identifier</th>
+                    <th>Query</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- A check to limit table size can be added. Will require we add a way to expand table if user wants to see rest of data. currently expands including all data regardless of size -->
+                {% for row in sentimentTable %}
+                    
+                    <tr scope="row">
+                        <td> {{ row['index'] }} </td>
+                        <td> {{ row['indentifier'] }} </td>
+                        <td> {{ row['query'] }} </td>
+                        <td> {{ row['result'] }} </td>
+                    </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    {% endif %}
+
+
     {% if ERRORMESSAGE %}
         <br>
         <div class="container mt-5">
