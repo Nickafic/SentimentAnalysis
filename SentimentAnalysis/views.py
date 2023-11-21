@@ -146,7 +146,7 @@ def analyzeFile():
         fileContent = activeFile.read().decode('utf-8')
         
         if(fileExtention == 'txt'): #TXT
-            lines = fileContent.split('\n')
+            lines = fileContent.split('\r\n')
             for line in lines:
                 
                 if not line.strip():
@@ -164,6 +164,7 @@ def analyzeFile():
                     return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE=msg )
 
                 messages.append(activeSplits[1].strip('"'))
+
         #END IF
         elif (fileExtention == 'csv'): #CSV
             csvRecords = []

@@ -11,18 +11,18 @@
   <body>
     <!-- Navigation Bar follows through the entire website.-->
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top"> 
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top"> 
       <div class="container-fluid">
-        <span class="navbar-text">Sentiment Analysis</span>
+        <a class="navbar-brand" href="/">Sentiment Analysis</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
           <div class="navbar-nav ms-auto">
             <a class="nav-item nav-link" id="home" href="/">Home</a>
-            <a class="nav-item nav-link" id="login" href="/account">Account</a>
+            <a class="nav-item nav-link" id="account" href="/account">Account</a>
             <a class="nav-item nav-link" id="login" href="/login">Login</a>
-            <a class="nav-item nav-link" id="login" href="/logout">Logout</a>
+            <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
           </div>
         </div>
       </div>
@@ -32,8 +32,10 @@
       {% block content %}
       {% endblock %}
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
   </body>
 </html>
