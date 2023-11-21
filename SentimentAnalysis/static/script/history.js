@@ -20,18 +20,51 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     }
 
-    // Function to update the sentiment history panel
+    // Function to update the sentiment history panel with a table
     function updatePanelWithData(data) {
         // Clear the panel
         historyPanel.innerHTML = '';
 
-        // Add new entries to the panel, up to a limit of 10 items
-        data.entries.slice(0, 10).forEach(entry => {
-            const listItem = document.createElement("li");
-            listItem.className = "list-group-item";
-            listItem.textContent = entry.text + " - Sentiment: " + entry.sentiment;
-            historyPanel.appendChild(listItem);
+        // Create a table element
+        const table = document.createElement("table");
+        table.className = "table table-striped";
+
+        // Create the table header
+        const thead = document.createElement("thead");
+        thead.className = "thead-dark";
+        const headerRow = document.createElement("tr");
+
+        // Add header cells (excluding 'Index')
+        ['Text', 'Sentiment'].forEach(function(headerText) {
+            const headerCell = document.createElement("th");
+            headerCell.textContent = headerText;
+            headerRow.appendChild(headerCell);
         });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Create the table body
+        const tbody = document.createElement("tbody");
+
+        // Add rows to the table
+        data.entries.slice(0, 10).forEach(entry => {
+            const row = document.createElement("tr");
+
+            // Add data cells (excluding 'index')
+            ['text', 'sentiment'].forEach(function(key) {
+                const cell = document.createElement("td");
+                cell.textContent = entry[key];
+                row.appendChild(cell);
+            });
+
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+
+        // Append the table to the panel
+        historyPanel.appendChild(table);
 
         // Update current page
         currentPage = data.page;

@@ -60,14 +60,11 @@ def analyzeText():
     text = request.form['text']
 
     # Call the sentiment analysis API using a GET request
-    response = requests.get(SENTIMENT_API_URL, params={'query': text})
+    response = requests.get(SENTIMENT_API_URL, params={ 'queryType' : 'single',
+                                                        'query': text})
 
     if response.status_code == 200:
-        response_text = response.text  # Get the response as a string
-
-        # Extract the last word of the sentiment label as the default value
-        sentiment_words = response_text.split(':')[-1].strip().split()
-        last_word = sentiment_words[-1].rstrip('"')
+        last_word = response.json()['body']
 
         response = senttable.get_item(Key={'username': session['username']})
         item = response.get('Item')
