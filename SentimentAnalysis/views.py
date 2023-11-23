@@ -222,7 +222,6 @@ def paginate():
             'totalPages': 0
         })
 
-
 @views.route('/analyzeFile', methods=['POST'])
 def analyzeFile():
     try: 

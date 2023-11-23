@@ -56,6 +56,11 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+        questionOne = request.form['securityQuestion1']
+        answerOne = request.form['answer1']
+        questionTwo = request.form['securityQuestion2']
+        answerTwo = request.form['answer2']
+        
 
         response = usertable.query(
             KeyConditionExpression='username = :username',
@@ -64,11 +69,17 @@ def signup():
         if len(response['Items']) == 0:
             salt = bcrypt.gensalt()
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+            security_answer1 = bcrypt.hashpw(answerOne.encode('utf-8'), salt)
+            security_answer2 = bcrypt.hashpw(answerTwo.encode('utf-8'), salt)
             usertable.put_item(
                 Item={
                     'username': username,
                     'email': email,
-                    'password': hashed_password.decode('utf-8')
+                    'password': hashed_password.decode('utf-8'),
+                    'securityQuestions': {
+                        questionOne: security_answer1,
+                        questionTwo: security_answer2
+                    }
                     }
             )
             senttable.put_item(
