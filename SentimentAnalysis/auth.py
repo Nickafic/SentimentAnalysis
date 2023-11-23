@@ -68,7 +68,8 @@ def signup():
                 Item={
                     'username': username,
                     'email': email,
-                    'password': hashed_password.decode('utf-8')
+                    'password': hashed_password.decode('utf-8'),
+                    'tables' : 0
                     }
             )
             senttable.put_item(

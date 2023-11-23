@@ -24,3 +24,8 @@ function exportTableToCSV(tableId, filename)
     document.body.appendChild(link);
     link.click();
 }
+
+function openPopup() {
+    $('#saveTableModal').modal('show');
+}
+  
