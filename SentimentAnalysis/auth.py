@@ -94,6 +94,20 @@ def signup():
     else:
         return render_template('signup.html', username=True)
 
-@auth.route('/recovery')
+@auth.route('/recovery', methods=['POST', 'GET'])
 def accountRecover():
-    return "<p>recovery</p><form method='GET', action='/login'><input type='submit' value='GO BACK'></form>"
+    if request.method == "POST":
+        SeqQuestions = ["Question 1","Question 2"]
+
+
+        return render_template('accountRecoverySeq.html', UNAME=request.form['uname'], EMAIL=request.form['email'], Q=SeqQuestions)
+    else:
+        return render_template('accountRecovery.html')
+
+@auth.route('/recoverySeq', methods=['POST'])
+def accountRecoverSeq():
+
+    #Check If Subission Is Valid
+
+    print(request.form['uname'])
+    print(request.form['email'])
