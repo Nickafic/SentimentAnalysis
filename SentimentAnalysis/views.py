@@ -24,7 +24,6 @@ def home():
          return redirect("/login")
     return render_template('main.html', USERNAME=session["username"], sentiment=None)
 
-
 @views.route('/account')
 def account():
     if not session.get('logged_in'):
@@ -54,7 +53,6 @@ def get_sentiment_history():
     }
 
     return jsonify(response_data)
-
 
 @views.route('/analyzeText', methods=['POST'])
 def analyzeText():

@@ -36,23 +36,43 @@ Sentimental Analysis Recovery Page
 
               <div class="mb-4">
                 <label for="securityQuestion1" class="form-label">Security Question 1</label>
-                <select class="form-control" id="securityQuestion1" name="securityQuestion1" required>
+                <select class="form-control" id="securityQuestion1" name="securityQuestion1">
                   <option value="" disabled selected> {{ Q[0] }} </option>
                 </select>
                 <input type="text" class="form-control mt-2" id="answer1" name="answer1" placeholder="Your Answer"
                   required>
               </div>
 
-              <!-- Second Security Question Dropdown -->
               <div class="mb-4">
                 <label for="securityQuestion2" class="form-label">Security Question 2</label>
-                <select class="form-control" id="securityQuestion2" name="securityQuestion2" required>
+                <select class="form-control" id="securityQuestion2" name="securityQuestion2">
                   <option value="" disabled selected> {{ Q[1] }} </option>
                 </select>
                 <input type="text" class="form-control mt-2" id="answer2" name="answer2" placeholder="Your Answer"
                   required>
               </div>
 
+              <div class="mb-0">
+                <h3 class="fw-bold mb-2 "> Reset Password </h3>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label" for="pword"> New Password </label>
+                <input class="form-control form-control-lg" type="password" id="pword"  name="password" placeholder="New Password" required/>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label" for="pword"> Confirm Password </label>
+                <input class="form-control form-control-lg" type="password" id="pwordconf"  name="passwordconf" placeholder="Confirm Password" required/>
+              </div>
+
+              {% if ERRORMESSAGE %}
+              <div class="container mt-5">
+                  <div class="alert alert-danger" role="alert">
+                      <strong>Error: {{ERRORMESSAGE}}</strong>. Something went wrong. Please try again.
+                  </div>
+              </div>
+              {% endif %}
 
               <button class="btn btn-outline-light btn-lg px-5" type="submit"> Submit </button>
               

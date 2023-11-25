@@ -34,7 +34,16 @@ Sentimental Analysis Recovery Page
                 <label class="form-label" for="pword"> Email </label>
               </div>
 
+              {% if ERRORMESSAGE %}
+              <div class="container mt-5">
+                  <div class="alert alert-danger" role="alert">
+                      <strong>Error: {{ERRORMESSAGE}}</strong>. Something went wrong. Please try again.
+                  </div>
+              </div>
+              {% endif %}
+
               <button class="btn btn-outline-light btn-lg px-5" type="submit"> Search For Account </button>
+
 
             </form>
 

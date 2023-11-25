@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
 import requests, boto3, bcrypt
 
+from boto3.dynamodb.types import TypeDeserializer 
+
 auth = Blueprint('auth', __name__)
 dynamodb = boto3.resource('dynamodb')
 usertable = dynamodb.Table('userdata')
@@ -55,30 +57,29 @@ def signup():
     if request.method == "POST":
         username = request.form['username']
         password = request.form['password']
-        email = request.form['email']
+        email = request.form['email'].lower()
         questionOne = request.form['securityQuestion1']
         answerOne = request.form['answer1']
         questionTwo = request.form['securityQuestion2']
         answerTwo = request.form['answer2']
         
-
         response = usertable.query(
             KeyConditionExpression='username = :username',
             ExpressionAttributeValues={':username': username}
         )
         if len(response['Items']) == 0:
             salt = bcrypt.gensalt()
-            hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-            security_answer1 = bcrypt.hashpw(answerOne.encode('utf-8'), salt)
-            security_answer2 = bcrypt.hashpw(answerTwo.encode('utf-8'), salt)
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt) #Case Sensitive
+            security_answer1 = bcrypt.hashpw(answerOne.lower().encode('utf-8'), salt) #ans is lowercased
+            security_answer2 = bcrypt.hashpw(answerTwo.lower().encode('utf-8'), salt) #ans is lowercased
             usertable.put_item(
                 Item={
                     'username': username,
-                    'email': email,
+                    'email': email, # email is lowercased
                     'password': hashed_password.decode('utf-8'),
                     'securityQuestions': {
-                        questionOne: security_answer1,
-                        questionTwo: security_answer2
+                        questionOne: security_answer1.decode('utf-8'),
+                        questionTwo: security_answer2.decode('utf-8')
                     }
                     }
             )
@@ -97,17 +98,83 @@ def signup():
 @auth.route('/recovery', methods=['POST', 'GET'])
 def accountRecover():
     if request.method == "POST":
-        SeqQuestions = ["Question 1","Question 2"]
 
+        uName = request.form['uname']
+        eMail = request.form['email'].lower()
+        SeqQuestions = []
+        try:
+            response = usertable.get_item(Key={'username':uName})
+            print(response)
 
-        return render_template('accountRecoverySeq.html', UNAME=request.form['uname'], EMAIL=request.form['email'], Q=SeqQuestions)
+            if "Item" in response:
+
+                if( not (eMail == response['Item']['email'])):
+                    return render_template('accountRecovery.html', ERRORMESSAGE="Account NOT Found")
+                
+                SecurityDictKeys = response['Item']['securityQuestions'].keys()
+                for key in SecurityDictKeys:
+                    SeqQuestions.append(key)
+                return render_template('accountRecoverySeq.html', UNAME=uName, EMAIL=eMail, Q=SeqQuestions)
+
+            else:
+                return render_template('accountRecovery.html', ERRORMESSAGE="Account NOT Found")
+        except:
+            return render_template('accountRecovery.html', ERRORMESSAGE="No Server Responce")
     else:
         return render_template('accountRecovery.html')
 
 @auth.route('/recoverySeq', methods=['POST'])
 def accountRecoverSeq():
+    ##If Security Q's Are answered correctly allow password reset
+    ans = []
+    ans.append( request.form['answer1'].lower() )
+    ans.append( request.form['answer2'].lower() )
+    uName = request.form['uname']
+    eMail = request.form['email']
+    pword = request.form['password']
+    pwordconf = request.form['passwordconf']
 
-    #Check If Subission Is Valid
+    try:
+        #GET user info
+        response = usertable.get_item(Key={'username': uName})
+        #Handle response
+        if 'Item' in  response: 
+            #Parse Res
+            sQuestionsObject = response.get('Item', {}).get('securityQuestions',{})
+            sQKeysList = []
+            sQList = []
+            for key, value, in sQuestionsObject.items():
+                sQKeysList.append(key)
+                sQList.append(value)
+            #Conf New Pass Match
+            if(pword != pwordconf):
+                return render_template('accountRecoverySeq.html', UNAME=uName, EMAIL=eMail, Q=sQKeysList, ERRORMESSAGE="Passwords do NOT match.")
 
-    print(request.form['uname'])
-    print(request.form['email'])
+            #Check Sec Questions
+            if( bcrypt.checkpw(ans[0].encode('utf-8'), sQList[0].encode('utf-8')) and bcrypt.checkpw(ans[1].encode('utf-8'), sQList[1].encode('utf-8'))  ):
+                #PASSED QUESTIONS
+    
+                salt = bcrypt.gensalt()
+                hashed_password = bcrypt.hashpw(pword.encode('utf-8'), salt) 
+
+                response = usertable.update_item(
+                    Key={
+                        'username': uName
+                    },
+                    UpdateExpression="SET password = :password",
+                    ExpressionAttributeValues={
+                        ':password': hashed_password.decode('utf-8')
+                    },
+                    ReturnValues="UPDATED_NEW"
+                )
+
+                print("UpdateItem succeeded:", response)
+
+                return render_template('accountRecoverySuccess.html')
+            
+            return render_template('accountRecoverySeq.html', UNAME=uName, EMAIL=eMail, Q=sQKeysList, ERRORMESSAGE="Failed Secutiy Questions")
+
+        else: # Should be Unreachable
+            return render_template('accountRecovery.html', ERRORMESSAGE="Server Error. No Account.")
+    except ConnectionError:
+        return render_template('accountRecovery.html', ERRORMESSAGE="Connection Error. No Response.")
