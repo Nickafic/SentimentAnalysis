@@ -139,6 +139,8 @@ def accountRecoverSeq():
         response = usertable.get_item(Key={'username': uName})
         #Handle response
         if 'Item' in  response: 
+            if( not (eMail == response['Item']['email'])):
+                    return render_template('accountRecovery.html', ERRORMESSAGE="Server Error. Account NOT Found.")
             #Parse Res
             sQuestionsObject = response.get('Item', {}).get('securityQuestions',{})
             sQKeysList = []
