@@ -296,7 +296,3 @@ def analyzeFile():
         #MAX FILE SIZE CHECK
         return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="File size exceeds the allowed limit")
 
-@views.errorhandler(413)
-def handle_request_entity_too_large(error):
-    return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="(413)File size exceeds the allowed limit")
-

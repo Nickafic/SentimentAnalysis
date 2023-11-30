@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask, render_template, session 
 from .views import views
 from .auth import auth
 
@@ -16,5 +16,10 @@ def create_app():
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+
+    @app.errorhandler(413)
+    def handle_request_entity_too_large(error):
+        return render_template('main.html', USERNAME=session["username"], ERRORMESSAGE="(413)File size exceeds the allowed limit")
+
 
     return app
